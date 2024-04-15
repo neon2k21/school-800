@@ -1,15 +1,15 @@
 const Router = require('express')
 const router = new Router()
-const userController = require('../controller/user.controller')
+const individual_tasksController = require('../controller/individual_tasks.controller')
 
-router.post('/user', userController.createUser)
-router.post('/getuser', userController.getUser)
-router.post('/getusernickname',userController.getUserNickName)
-router.post('/getuserlikes',userController.getLikedPubs)
-router.post('/getuserfavor',userController.getFavouriteObject)
-router.delete('/user', userController.deleteUser)
-router.put('/setusertoken', userController.setUserToken)
-router.put('/setNewAvatar', userController.setUserAvatar)
+
+
+router.post('/createTask', individual_tasksController.createTask)
+router.delete('/deleteTask', individual_tasksController.deleteTask)
+router.post('/getTask',individual_tasksController.getTask)
+router.put('/setTaskCompleted',individual_tasksController.setTaskCompleted)
+
+
 
 
 module.exports = router
