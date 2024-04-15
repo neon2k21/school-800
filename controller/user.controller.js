@@ -6,11 +6,11 @@ class UserController{
 
     async createUser(req,res){
         
-        const { nickname, login, pass } = req.body
+        const {fio, login, password, token, grp, classs, age, corpus, misc  } = req.body
         const sql = (
-            `insert into users (nickname, login, pass, token, role) values (?, ?, ?,"",1);`
+            `insert into users (fio, login, password, token, grp, class, age, corpus, misc ) values (?, ?, ?, ?,?,?,?,?,?);`
         )
-        db.all(sql,[nickname, login, pass], (err,rows) => {
+        db.all(sql,[fio, login, password, token, grp, classs, age, corpus, misc ], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)     
         })
@@ -30,7 +30,7 @@ class UserController{
     })
     }
 
-    async getUserNickName(req,res){
+    async getUserData(req,res){
         const { id } = req.body
        
         const sql = (
@@ -41,8 +41,6 @@ class UserController{
             else res.json(rows)
     })
     }
-
-
 
     async deleteUser(req,res){
         const { id } = req.body
@@ -66,47 +64,7 @@ class UserController{
             else res.json(rows)
         })
     }
-
-    async getFavouriteObject(req,res){
-        const {id} = req.body
-
-
-        const sql = (
-            ` SELECT o.*
-            FROM objects o
-            INNER JOIN users_favourite_objects ufo ON o.id = ufo.object_id
-            WHERE ufo.user = ?;`
-        )
-
-        db.all(sql,[id], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-        })
-
-        
-       
-    }
-
-    async getLikedPubs(req,res){
-        
-        const {id} = req.body
-
-
-        const sql = (
-            ` SELECT p.*
-            FROM publications p
-            INNER JOIN Likes l ON p.id = l.publication_id
-            WHERE l.useradd = ?;`
-        )
-
-        db.all(sql,[id], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-        })
-
-}
-
-
+   
     async setUserAvatar(req,res){
         const {id,avatar} =req.body
         const sql = (
@@ -119,7 +77,240 @@ class UserController{
         })
     }
 
-    
+    async setUserIndividualPoints(req,res){
+        const {user_id} =req.body
+        const indi_points = countPointsForCompleteIndividualTasks(db,user_id)
+        const sql = (
+            ` update users set individual_points=? where id=?;`
+        )
+
+        db.all(sql,[indi_points, id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+        })
+    }
+
+    async setUserGroupPoints(req,res){
+        const {user_id, user_grp} =req.body
+        const grp_points = countPointsForCompleteGroupTasks(db, user_id, user_grp)
+        const sql = (
+            ` update users set group_points=? where id=?;`
+        )
+
+        db.all(sql,[grp_points, id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+        })
+    }
+
+    //async setUserGrp(req,res){}
+
+    // async getTotalUserPoints(req,res){
+    //     const {id} =req.body
+    //     const sql = (
+    //         ` update users set cout_points=? where id=?;`
+    //     )
+
+    //     db.all(sql,[cout_points, id], (err,rows) => {
+    //         if (err) return res.json(err)
+    //         else res.json(rows)
+    //     })
+    // }
+
+
+
+    async setIndividualUserCompleteTasks(req,res){
+        const {user_id} = req.body
+        const object =  countCompletedAndNotCompletedIndividualTasks(db,user_id)
+        const sql = (
+            ` update users set count_individual_tasks=? where id=?;`
+        )
+
+        db.all(sql,[object.completed_tasks, id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+        })
+    }
+
+    async setGroupUserCompleteTasks(req,res){
+        const {user_id, user_grp} = req.body
+        const object =  countCompletedAndNotCompletedGroupTasks(db,user_id,user_grp)
+        const sql = (
+            ` update users set groupcount_grp_tasks_points=? where id=?;`
+        )
+
+        db.all(sql,[object.completed_tasks, id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+        })
+    }
+
+    async getAllStatisticsForUserByTracks(req,res){
+        const {user_id} = req.body
+        const object = await getAllInfoFromIndividualTasksByTracks(db)
+        const tracks = await getAllTracks(db)
+        let array = []
+        for(let i = 0; i < tracks.rows.length; i++){
+            let obj = { track: tracks.rows[i].name, completed_tasks: 0, notCompleted_tasks: 0}
+            for(let j = 0; j < object.rows.length; j++){
+                if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].track == tracks.rows[i].id+1) obj.completed_tasks++
+                if(object.rows[i].user == user_id && object.rows[i].status == 0 && object.rows[i].track == tracks.rows[i].id+1) obj.notCompleted_tasks++
+            }
+            array.push(obj)
+        }
+        res.json(array)
+    }
+
+    async getAllStatisticsForUser(req,res){
+        const {user_id} = req.body
+        const object = await getAllInfoFromIndividualTasksByTracks(db)
+        const tracks = await getAllTracks(db)
+        let array = []
+        for(let i = 0; i < tracks.rows.length; i++){
+            let obj = { track: tracks.rows[i].name, completed_tasks: 0, notCompleted_tasks: 0}
+            for(let j = 0; j < object.rows.length; j++){
+                if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].track == tracks.rows[i].id+1) obj.completed_tasks++
+                if(object.rows[i].user == user_id && object.rows[i].status == 0 && object.rows[i].track == tracks.rows[i].id+1) obj.notCompleted_tasks++
+            }
+            array.push(obj)
+        }
+        res.json(array)
+    }
+
+
+}
+
+
+async function countPointsForCompleteIndividualTasks(db,user_id){
+    const object = await getAllInfoFromIndividualTasks(db)
+    let summ = 0
+
+    for(let i = 0; i < object.rows.length; i++){
+        if(object.rows[i].user == user_id && object.rows[i].status == 1) summ++
+    }
+    return summ
+}
+
+async function countPointsForCompleteGroupTasks(db,user_id,user_grp){
+    const object = await getAllInfoFromGroupTasks(db)
+    let summ = 0
+
+    for(let i = 0; i < object.rows.length; i++){
+        if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].grp == user_grp ) summ++
+    }
+    return summ
+}
+
+async function countCompletedAndNotCompletedIndividualTasks(db,user_id){
+    const object = await getAllInfoFromIndividualTasks(db)
+    let array = { completed_tasks: 0, notCompleted_tasks: 0}
+
+    for(let i = 0; i < object.rows.length; i++){
+        if(object.rows[i].user == user_id && object.rows[i].status == 1 ) array.completed_tasks++
+        if(object.rows[i].user == user_id && object.rows[i].status == 0 ) array.notCompleted_tasks++
+    }
+    return array
+}
+
+async function countCompletedAndNotCompletedGroupTasks(db,user_id,user_grp){
+    const object = await getAllInfoFromGroupTasks(db)
+    let array = { completed_tasks: 0, notCompleted_tasks: 0}
+
+    for(let i = 0; i < object.rows.length; i++){
+        if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].grp == user_grp ) array.completed_tasks++
+        if(object.rows[i].user == user_id && object.rows[i].status == 0 && object.rows[i].grp == user_grp) array.notCompleted_tasks++
+    }
+    return array
+}
+
+async function getAllInfoFromIndividualTasksByTracks(db) {
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`SELECT individual_tasks.id, individual_tasks.name AS task_name, individual_tasks.description, 
+        individual_tasks.date_of_creation, individual_tasks.date_of_deadline, 
+        individual_tasks.point, individual_tasks.status, 
+        track.name AS track_name
+ FROM individual_tasks
+ JOIN track ON individual_tasks.track = track.id;
+ `, (err, rows) => {
+            if (err) {
+                responseObj = {
+                    'error': err
+                };
+                reject(responseObj);
+            } else {
+                responseObj = {
+                    rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
+}
+
+async function getAllInfoFromIndividualTasks(db) {
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from individual_tasks;`, (err, rows) => {
+            if (err) {
+                responseObj = {
+                    'error': err
+                };
+                reject(responseObj);
+            } else {
+                responseObj = {
+                    rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
+}
+
+async function getAllInfoFromGroupTasks(db) {
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from group_task;`, (err, rows) => {
+            if (err) {
+                responseObj = {
+                    'error': err
+                };
+                reject(responseObj);
+            } else {
+                responseObj = {
+                    rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
+}
+
+async function getAllTracks(db) {
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from track;`, (err, rows) => {
+            if (err) {
+                responseObj = {
+                    'error': err
+                };
+                reject(responseObj);
+            } else {
+                responseObj = {
+                    rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
 }
 
 
