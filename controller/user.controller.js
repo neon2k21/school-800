@@ -103,21 +103,30 @@ class UserController{
         })
     }
 
-    //async setUserGrp(req,res){}
+    async setUserGrp(req,res){
 
-    // async getTotalUserPoints(req,res){
-    //     const {id} =req.body
-    //     const sql = (
-    //         ` update users set cout_points=? where id=?;`
-    //     )
+        const { user_id, grp } =req.body
 
-    //     db.all(sql,[cout_points, id], (err,rows) => {
-    //         if (err) return res.json(err)
-    //         else res.json(rows)
-    //     })
-    // }
+        const sql = (
+            ` update users set grp=? where id=?;`
+        )
 
+        db.all(sql,[grp, user_id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+        })
 
+    }
+
+    async getTotalUserPoints(req,res){
+       
+        const { user_id } =req.body
+
+        const data = getDataForSum(db, user_id)
+
+        res.json(data.individual_points+data.group_points)
+    
+    }
 
     async setIndividualUserCompleteTasks(req,res){
         const {user_id} = req.body
@@ -180,6 +189,26 @@ class UserController{
 
 }
 
+async function getDataForSum(db, user_id) {
+
+    return new Promise((resolve, reject) => {
+        var responseObj;
+        db.all(`select * from users where id=${user_id};`, (err, rows) => {
+            if (err) {
+                responseObj = {
+                    'error': err
+                };
+                reject(responseObj);
+            } else {
+                responseObj = {
+                    rows: rows
+                };
+                resolve(responseObj);
+            }
+        });
+    });
+
+}
 
 async function countPointsForCompleteIndividualTasks(db,user_id){
     const object = await getAllInfoFromIndividualTasks(db)

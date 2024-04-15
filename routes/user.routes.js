@@ -2,14 +2,27 @@ const Router = require('express')
 const router = new Router()
 const userController = require('../controller/user.controller')
 
-router.post('/user', userController.createUser)
-router.post('/getuser', userController.getUser)
-router.post('/getusernickname',userController.getUserNickName)
-router.post('/getuserlikes',userController.getLikedPubs)
-router.post('/getuserfavor',userController.getFavouriteObject)
-router.delete('/user', userController.deleteUser)
-router.put('/setusertoken', userController.setUserToken)
-router.put('/setNewAvatar', userController.setUserAvatar)
+
+
+//post
+router.post('/createUser', userController.createUser)
+router.post('/getUser', userController.getUser)
+router.post('/getUserData',userController.getUserData)
+router.post('/getTotalUserPoints', userController.getTotalUserPoints)
+router.post('/getAllStatisticsForUserByTracks', userController.getAllStatisticsForUserByTracks)
+router.post('/getAllStatisticsForUser', userController.getAllStatisticsForUser)
+
+//put
+router.put('/setUserToken',userController.setUserToken)
+router.put('/setUserGrp', userController.setUserGrp)
+router.put('/setUserAvatar', userController.setUserAvatar)
+router.put('/setIndividualUserCompleteTasks', userController.setIndividualUserCompleteTasks)
+router.put('/setGroupUserCompleteTasks', userController.setGroupUserCompleteTasks)
+router.put('/setUserIndividualPoints', userController.setUserIndividualPoints)
+router.put('/setUserGroupPoints', userController.setUserGroupPoints)
+
+//delete
+router.delete('/deleteUser',userController.deleteUser)
 
 
 module.exports = router

@@ -1,127 +1,65 @@
 const db = require('../config')
+const { format, parse } = require('date-fns');
 
 
 
-class UserController{
+class GroupTaskController{
 
-    async createUser(req,res){
+    async createTask(req,res){
+
+        const today = new Date();
+        const date_of_creation = format(today, 'yyyy-MM-dd');
         
-        const { nickname, login, pass } = req.body
+        const { name, description, date_of_deadline, point, grp,track } = req.body
         const sql = (
-            `insert into users (nickname, login, pass, token, role) values (?, ?, ?,"",1);`
+            `insert into group_task (name, description, date_of_creation, date_of_deadline, point, grp, track) values (?, ?, ?, ?, ?, ?, ?);`
         )
-        db.all(sql,[nickname, login, pass], (err,rows) => {
+        db.all(sql,[name, description, date_of_creation, date_of_deadline, point, grp, track], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)     
         })
         
     }   
 
-    async getUser(req,res){
-        const { login, password} = req.body
-        console.log(login, password)
+    async getTask(req,res){
+        const { task_id } = req.body
         const sql = (
-            `select * from users where (login=? AND pass=?);`
+            `select * from group_task where id=?;`
         )
-        db.all(sql,[login, password], (err,rows) => {
-            if (err) return res.json(err)
-            if(rows.length === 0) return res.json('Данные не совпадают! Проверьте и повторите попытку')
-            else res.json(rows)
-    })
-    }
-
-    async getUserNickName(req,res){
-        const { id } = req.body
-       
-        const sql = (
-            `select * from users where id=?;`
-        )
-        db.all(sql,[id], (err,rows) => {
+        db.all(sql,[task_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
     })
     }
 
-
-
-    async deleteUser(req,res){
-        const { id } = req.body
-        const sql = (
-            `delete from users where id =?;`
-        )
-        db.all(sql,[id], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-         })
-    }    
-
-    async setUserToken(req,res){
-        const {user, token} =req.body
-        const sql = (
-            ` update users set token=? where id=?;`
-        )
-
-        db.all(sql,[token, user], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-        })
-    }
-
-    async getFavouriteObject(req,res){
-        const {id} = req.body
-
-
-        const sql = (
-            ` SELECT o.*
-            FROM objects o
-            INNER JOIN users_favourite_objects ufo ON o.id = ufo.object_id
-            WHERE ufo.user = ?;`
-        )
-
-        db.all(sql,[id], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-        })
-
-        
+    async deleteTask(req,res){
+        const { task_id } = req.body
        
-    }
-
-    async getLikedPubs(req,res){
-        
-        const {id} = req.body
-
-
         const sql = (
-            ` SELECT p.*
-            FROM publications p
-            INNER JOIN Likes l ON p.id = l.publication_id
-            WHERE l.useradd = ?;`
+            `delete from group_task where id=?;`
         )
-
-        db.all(sql,[id], (err,rows) => {
+        db.all(sql,[task_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
-        })
+    })
+    }
+
+    async setTaskCompleted(req, res){
+
+        const { task_id } = req.body
+
+        const sql = (
+            `update group_task set status=1 where id=?;`
+        )
+        db.all(sql,[task_id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
+
+    }
 
 }
 
 
-    async setUserAvatar(req,res){
-        const {id,avatar} =req.body
-        const sql = (
-            ` update users set avatar=? where id=?;`
-        )
 
-        db.all(sql,[avatar, id], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-        })
-    }
-
-    
-}
-
-
-
-module.exports = new UserController()
+module.exports = new GroupTaskController()
