@@ -10,7 +10,7 @@ class PortfolioController{
         const sql = (
             `insert into portfolio (user, name, level, place, track, image) values (?, ?, ?,?,?,?);`
         )
-        db.all(sql,[user, name, level, place, track, image, score], (err,rows) => {
+        db.all(sql,[user, name, level, place, track, image], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)     
         })

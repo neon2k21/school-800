@@ -21,17 +21,6 @@ class GroupTaskController{
         
     }   
 
-    async getAllGroupTasks(req, res){
-        const { grp } = req.body
-        const sql = (
-            `select * from group_task where grp=?;`
-        )
-        db.all(sql,[grp], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-    })
-    }
-
     async getTask(req,res){
         const { task_id } = req.body
         const sql = (
@@ -67,6 +56,17 @@ class GroupTaskController{
             else res.json(rows)
     })
 
+    }
+    
+    async getAllGroupTasks(req, res){
+        const { grp } = req.body
+        const sql = (
+            `select * from group_task where grp=?;`
+        )
+        db.all(sql,[grp], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
     }
 
 }

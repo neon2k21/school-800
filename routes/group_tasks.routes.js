@@ -9,7 +9,5 @@ router.put('/setTaskCompleted',group_tasksController.setTaskCompleted)
 
 router.post('/getAllGroupTasks',group_tasksController.getAllGroupTasks)
 
-
-
 module.exports = router
 

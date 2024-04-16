@@ -29,9 +29,9 @@ class TrackController{
     }
 
     async updateRole(req,res){
-        const { role_id,name} = req.body
+        const { role_id, name} = req.body
         const sql = (
-            `update roles set name=? where id=?`
+            `update roles set role=? where id=?`
         )
         db.all(sql,[name, role_id], (err,rows) => {
             if (err) return res.json(err)

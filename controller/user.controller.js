@@ -208,6 +208,7 @@ class UserController{
     }
 }
 
+
 async function getDataForSum(db, user_id) {
 
     return new Promise((resolve, reject) => {
@@ -358,6 +359,7 @@ async function getAllTracks(db) {
             }
         });
     });
+
 
 }
 

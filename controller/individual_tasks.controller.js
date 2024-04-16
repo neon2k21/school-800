@@ -21,19 +21,6 @@ class IndividualTaskController{
         
     }   
 
-    async getAllIndividualTasks(req,res){
-        const { user_id } = req.body
-        const sql = (
-            `select * from individual_tasks where student=?;`
-        )
-        db.all(sql,[user_id], (err,rows) => {
-            if (err) return res.json(err)
-            else res.json(rows)
-    })
-    }
-
-
-
     async getCurrentTask(req,res){
         const { task_id } = req.body
         const sql = (
@@ -71,6 +58,18 @@ class IndividualTaskController{
     })
 
     }
+
+    async getAllIndividualTasks(req,res){
+        const { user_id } = req.body
+        const sql = (
+            `select * from individual_tasks where student=?;`
+        )
+        db.all(sql,[user_id], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
+    }
+
 
 
 

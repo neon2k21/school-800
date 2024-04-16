@@ -2,8 +2,7 @@ const Router = require('express')
 const router = new Router()
 const userController = require('../controller/user.controller')
 
-//get
-router.get('/getAllUsersData', userController.getAllUsersData)
+
 
 //post
 router.post('/createUser', userController.createUser)
@@ -13,7 +12,7 @@ router.post('/getTotalUserPoints', userController.getTotalUserPoints)
 router.post('/getAllStatisticsForUserByTracks', userController.getAllStatisticsForUserByTracks)
 router.post('/getAllStatisticsForUser', userController.getAllStatisticsForUser)
 router.post('/getAllUsersDataByGrp', userController.getAllUsersDataByGrp)
-
+router.post('/getAllUsersData', userController.getAllUsersData)
 //put
 router.put('/setUserToken',userController.setUserToken)
 router.put('/setUserGrp', userController.setUserGrp)
