@@ -6,11 +6,11 @@ class TrackController{
 
     async createRole(req,res){
         
-        const { name } = req.body
+        const { role } = req.body
         const sql = (
-            `insert into roles (name) values (?);`
+            `insert into roles (role) values (?);`
         )
-        db.all(sql,[name], (err,rows) => {
+        db.all(sql,[role], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)     
         })

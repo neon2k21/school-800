@@ -6,7 +6,7 @@ class UserController{
 
     async createUser(req,res){
         
-        const {fio, login, password, token, grp, classs, age, corpus, misc  } = req.body
+        const {fio, login, password, token, grp, classs, age, corpus, misc } = req.body
         const sql = (
             `insert into users (fio, login, password, token, grp, class, age, corpus, misc ) values (?, ?, ?, ?,?,?,?,?,?);`
         )
@@ -84,7 +84,7 @@ class UserController{
             ` update users set individual_points=? where id=?;`
         )
 
-        db.all(sql,[indi_points, id], (err,rows) => {
+        db.all(sql,[indi_points, user_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
         })
@@ -97,7 +97,7 @@ class UserController{
             ` update users set group_points=? where id=?;`
         )
 
-        db.all(sql,[grp_points, id], (err,rows) => {
+        db.all(sql,[grp_points, user_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
         })
@@ -135,7 +135,7 @@ class UserController{
             ` update users set count_individual_tasks=? where id=?;`
         )
 
-        db.all(sql,[object.completed_tasks, id], (err,rows) => {
+        db.all(sql,[object.completed_tasks, user_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
         })
@@ -145,10 +145,10 @@ class UserController{
         const {user_id, user_grp} = req.body
         const object =  countCompletedAndNotCompletedGroupTasks(db,user_id,user_grp)
         const sql = (
-            ` update users set groupcount_grp_tasks_points=? where id=?;`
+            ` update users set count_grp_tasks=? where id=?;`
         )
 
-        db.all(sql,[object.completed_tasks, id], (err,rows) => {
+        db.all(sql,[object.completed_tasks, user_id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
         })
@@ -186,7 +186,26 @@ class UserController{
         res.json(array)
     }
 
+    async getAllUsersData(req,res){
+        const sql = (
+            `select * from users where role=1;`
+        )
+        db.all(sql,[], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
+    }
 
+    async getAllUsersDataByGrp(req,res){
+        const {grp} = req.body
+        const sql = (
+            `select * from users where role=1 and grp=?;`
+        )
+        db.all(sql,[grp], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
+    }
 }
 
 async function getDataForSum(db, user_id) {
@@ -215,7 +234,7 @@ async function countPointsForCompleteIndividualTasks(db,user_id){
     let summ = 0
 
     for(let i = 0; i < object.rows.length; i++){
-        if(object.rows[i].user == user_id && object.rows[i].status == 1) summ++
+        if(object.rows[i].user == user_id && object.rows[i].status == 1) object.rows[i].point++
     }
     return summ
 }
@@ -225,7 +244,7 @@ async function countPointsForCompleteGroupTasks(db,user_id,user_grp){
     let summ = 0
 
     for(let i = 0; i < object.rows.length; i++){
-        if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].grp == user_grp ) summ++
+        if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].grp == user_grp ) object.rows[i].point
     }
     return summ
 }

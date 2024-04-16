@@ -17,6 +17,18 @@ class TrackController{
         
     }   
 
+    async getTrackName(req,res){
+        const {id} = req.body
+        const sql = (
+            `select * from track where id=?;`
+        )
+        db.all(sql,[id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)     
+        })
+
+    }
+
     async deleteTrack(req,res){
         const { track_id} = req.body
         const sql = (

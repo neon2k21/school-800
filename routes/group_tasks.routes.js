@@ -7,6 +7,8 @@ router.delete('/deleteTask', group_tasksController.deleteTask)
 router.post('/getTask',group_tasksController.getTask)
 router.put('/setTaskCompleted',group_tasksController.setTaskCompleted)
 
+router.post('/getAllGroupTasks',group_tasksController.getAllGroupTasks)
+
 
 
 module.exports = router

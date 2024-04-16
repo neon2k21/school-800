@@ -3,6 +3,8 @@ const router = new Router()
 const trackController = require('../controller/track.controller')
 
 router.post('/createTrack', trackController.createTrack)
+router.post('/getTrackName', trackController.getTrackName)
+
 router.delete('/deleteTrack', trackController.deleteTrack)
 router.put('/updateTrack', trackController.updateTrack)
 
