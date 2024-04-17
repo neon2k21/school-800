@@ -12,7 +12,7 @@ router.post('/getTotalUserPoints', userController.getTotalUserPoints)
 router.post('/getAllStatisticsForUserByTracks', userController.getAllStatisticsForUserByTracks)
 router.post('/getAllStatisticsForUser', userController.getAllStatisticsForUser)
 router.post('/getAllUsersDataByGrp', userController.getAllUsersDataByGrp)
-router.post('/getAllUsersData', userController.getAllUsersData)
+router.get('/getAllUsersData', userController.getAllUsersData)
 //put
 router.put('/setUserToken',userController.setUserToken)
 router.put('/setUserGrp', userController.setUserGrp)

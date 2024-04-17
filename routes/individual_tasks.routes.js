@@ -4,7 +4,7 @@ const individual_tasksController = require('../controller/individual_tasks.contr
 
 
 
-router.post('/createIndividualTask', individual_tasksController.createTask)
+router.post('/createIndividualTask', individual_tasksController.createIndividualTask)
 router.delete('/deleteIndividualTask', individual_tasksController.deleteTask)
 router.post('/getCurrentTask',individual_tasksController.getCurrentTask)
 router.put('/setIndividualTaskCompleted',individual_tasksController.setTaskCompleted)
@@ -12,5 +12,9 @@ router.put('/setIndividualTaskCompleted',individual_tasksController.setTaskCompl
 router.post('/getAllIndividualTasks', individual_tasksController.getAllIndividualTasks)
 
 
+router.get('/getAllTasksForCheck', individual_tasksController.getAllTasksForCheck)
+
+
+router.get('/getAllIndividualTasksData', individual_tasksController.getAllIndividualTasksData)
 module.exports = router
 

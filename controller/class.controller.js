@@ -16,6 +16,16 @@ class ClassController{
         })
         
     }   
+    async getClassName(req, res) {
+        const { class_id } = req.body
+        const sql = (
+            `select name from classsss where id=?;`
+        )
+        db.all(sql,[class_id], (err,rows) => {
+            if (err) return res.json(err)
+            else return res.json(rows)     
+        })
+    }
 
     async deleteClass(req,res){
         const { class_id} = req.body

@@ -46,7 +46,7 @@ class TrackController{
         )
         db.all(sql,[id], (err,rows) => {
             if (err) return res.json(err)
-            else return res.json(rows)     
+            else return res.json(rows)
         })
 
     }

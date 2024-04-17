@@ -21,7 +21,7 @@ class UserController{
         const { login, password} = req.body
         console.log(login, password)
         const sql = (
-            `select * from users where (login=? AND pass=?);`
+            `select * from users where (login=? AND password=?);`
         )
         db.all(sql,[login, password], (err,rows) => {
             if (err) return res.json(err)
@@ -173,14 +173,19 @@ class UserController{
     async getAllStatisticsForUser(req,res){
         const {user_id} = req.body
         const object = await getAllInfoFromIndividualTasksByTracks(db)
+        console.log(object.rows[0])
         const tracks = await getAllTracks(db)
+        console.log(tracks.rows[0])
+
         let array = []
         for(let i = 0; i < tracks.rows.length; i++){
             let obj = { track: tracks.rows[i].name, completed_tasks: 0, notCompleted_tasks: 0}
             for(let j = 0; j < object.rows.length; j++){
-                if(object.rows[i].user == user_id && object.rows[i].status == 1 && object.rows[i].track == tracks.rows[i].id+1) obj.completed_tasks++
-                if(object.rows[i].user == user_id && object.rows[i].status == 0 && object.rows[i].track == tracks.rows[i].id+1) obj.notCompleted_tasks++
+                console.log(object.rows[j].status)
+                if(object.rows[j].student == user_id && object.rows[j].status == 1 ) obj.completed_tasks++
+                else  obj.notCompleted_tasks++
             }
+            console.log(obj)
             array.push(obj)
         }
         res.json(array)
@@ -278,7 +283,7 @@ async function getAllInfoFromIndividualTasksByTracks(db) {
         var responseObj;
         db.all(`SELECT individual_tasks.id, individual_tasks.name AS task_name, individual_tasks.description, 
         individual_tasks.date_of_creation, individual_tasks.date_of_deadline, 
-        individual_tasks.point, individual_tasks.status, 
+        individual_tasks.point, individual_tasks.status, individual_tasks.student, individual_tasks.track,
         track.name AS track_name
  FROM individual_tasks
  JOIN track ON individual_tasks.track = track.id;

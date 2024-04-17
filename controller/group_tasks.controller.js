@@ -69,6 +69,16 @@ class GroupTaskController{
     })
     }
 
+    async getAllGroupTasksData (req,res) {
+        const sql = (
+            `select * from group_task;`
+        )
+        db.all(sql,[], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
+    }
+
 }
 
 

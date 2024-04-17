@@ -18,27 +18,46 @@ class PortfolioController{
     }   
 
     async deletePortfolio(req,res){
-        const { portfolio_id} = req.body
+        const { id} = req.body
         const sql = (
             `delete from portfolio where id=?`
         )
-        db.all(sql,[portfolio_id], (err,rows) => {
+        db.all(sql,[id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
     })
     }
 
     async setPortfolioScore(req,res){
-        const { portfolio_id, score} = req.body
+        const { id, score} = req.body
+        console.log(id,score)
         const sql = (
-            `update portfolio set score=? where id=?`
+            `update portfolio set score=?, chacked=1 where id=?`
         )
-        db.all(sql,[score, portfolio_id], (err,rows) => {
+        db.all(sql,[score, id], (err,rows) => {
             if (err) return res.json(err)
             else res.json(rows)
     })
     }
+
+    async getAllPortfolioForCheck(req, res){
+
+        const sql = (
+            `SELECT *
+            FROM portfolio
+            JOIN users ON portfolio.user = users.id
+            where chacked=0;`
+        )
+        db.all(sql,[], (err,rows) => {
+            if (err) return res.json(err)
+            else res.json(rows)
+    })
+
+    }
+
 }
+
+
 
 
 

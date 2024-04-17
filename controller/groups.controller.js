@@ -6,11 +6,11 @@ class GroupsController{
 
     async createGroup(req,res){
         
-        const { name, description, track, image, grp_task } = req.body
+        const { name, description, image, grp_task } = req.body
         const sql = (
-            `insert into groupes (name, description, track, image, grp_task) values (?, ?, ?, ?, ?);`
+            `insert into groupes (name, description, image, grp_task) values (?, ?, ?, ?);`
         )
-        db.all(sql,[name, description, track, image, grp_task], (err,rows) => {
+        db.all(sql,[name, description, image, grp_task], (err,rows) => {
             if (err) return res.json(err)
             else return res.json(rows)     
         })
@@ -56,7 +56,7 @@ class GroupsController{
     async getAllGroups(req,res){
 
         const sql = (
-            `select (id, name) from groupes;`
+            `select id, name from groupes;`
         )
         db.all(sql,[], (err,rows) => {
             if (err) return res.json(err)
